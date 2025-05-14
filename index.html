@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kolstier</title>
+  <link rel="icon" href="images/TIER.png" type="image/png">
+  <style>
+    :root {
+      --bg-color: #0a0a0a;
+      --text-color: #e0e0e0;
+      --accent-color: #ff5500;
+      --tier-ss: #ff4d4d;
+      --tier-s: #ffaa33;
+      --tier-a: #ffff66;
+      --tier-b: #66ff66;
+      --tier-c: #99ff99;
+      --tier-d: #ccffcc;
+    }
+    
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      background-image: 
+        linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="50" height="50" x="0" y="0" fill="%23111111"/><rect width="50" height="50" x="50" y="50" fill="%23111111"/></svg>');
+      background-size: 20px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      border-left: 1px solid #333;
+      border-right: 1px solid #333;
+      min-height: 100vh;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid var(--accent-color);
+      position: relative;
+    }
+    
+    .header h1 {
+      font-size: 3em;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      margin: 0;
+      text-shadow: 2px 2px 0 #000;
+      font-weight: 900;
+    }
+    
+    .header p {
+      font-size: 1.2em;
+      margin: 10px 0 0;
+      color: #aaa;
+    }
+    
+    .update-info {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.8em;
+      color: #666;
+    }
+    
+    .twitter-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #1DA1F2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    .tier {
+      margin-bottom: 30px;
+      border: 1px solid #333;
+      background-color: rgba(20, 20, 20, 0.8);
+      display: flex;
+      min-height: 120px;
+    }
+    
+    .tier-label-container {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .tier-label {
+      padding: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 2px solid #333;
+      width: 200px;
+    }
+    
+    .tier-label .monthly {
+      font-size: 0.7em;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .tier-ss { background-color: var(--tier-ss); color: white; }
+    .tier-s { background-color: var(--tier-s); color: black; }
+    .tier-a { background-color: var(--tier-a); color: black; }
+    .tier-b { background-color: var(--tier-b); color: black; }
+    .tier-c { background-color: var(--tier-c); color: black; }
+    .tier-d { background-color: var(--tier-d); color: black; }
+    
+    .tier-grid {
+        display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 50px;
+    }
+    
+    .person-card {
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 5px;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      width: 100px;
+      flex-shrink: 0;
+    }
+    
+    .person-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(255, 85, 0, 0.3);
+      border-color: var(--accent-color);
+    }
+    
+    .person-image {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-bottom: 1px solid #333;
+    }
+    
+    .person-info {
+      padding: 8px;
+      text-align: center;
+    }
+    
+    .person-name {
+      font-weight: bold;
+      font-size: 0.9em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .person-crime {
+      font-size: 0.7em;
+      color: #999;
+      margin-top: 3px;
+    }
+    
+    @media (max-width: 768px) {
+      .tier {
+        flex-direction: column;
+      }
+      
+      .tier-label-container {
+        width: 100%;
+      }
+      
+      .tier-label {
+        border-right: none;
+        border-bottom: 2px solid #333;
+      }
+      
+      .person-card {
+        width: 80px;
+      }
+      
+      .person-image {
+        height: 80px;
+      }
+      
+      .header h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="update-info">updated every 10 minutes</div>
+      <h1>Kolstier</h1>
+      <p>on chain farming niggas tier list</p>
+      <a href="https://x.com/kolstier" class="twitter-link" target="_blank">Follow on X</a>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-ss">Goated <span class="monthly">$50k+ monthly</span></div>
+      </div>
+      <div class="tier-grid" id="goated"></div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-s">Good Traders <span class="monthly">$20k+ monthly</span></div>
+      </div>
+      <div class="tier-grid" id="good-traders"></div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-a">Mid <span class="monthly">$10k+ monthly</span></div>
+      </div>
+      <div class="tier-grid" id="mid"></div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-b">Farmers / Bad Traders <span class="monthly">$5k+ monthly</span></div>
+      </div>
+      <div class="tier-grid" id="farmers-bad"></div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-c">Liquidity Extractors <span class="monthly">$1k+ monthly</span></div>
+      </div>
+      <div class="tier-grid" id="liquidity-extractors"></div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-label-container">
+        <div class="tier-label tier-d">WHO TF IS THIS NIGGA <span class="monthly"><$1k monthly</span></div>
+      </div>
+      <div class="tier-grid" id="who-tf"></div>
+    </div>
+  </div>
+
+  <script>
+    const fugitives = [
+      { id: 1, name: "Cented", crime: "AJ6MGE", photo: "1.png", twitter: "https://x.com/Cented7" },
+      { id: 2, name: "Euris", crime: "AJ6MGE", photo: "2.png", twitter: "https://x.com/Euris_JT" },
+      { id: 3, name: "Tim", crime: "AJ6MGE", photo: "3.png", twitter: "https://x.com/timmpix1" },
+      { id: 4, name: "Kadenox", crime: "3pZ59Y", photo: "4.png", twitter: "https://x.com/kadenox" },
+      { id: 5, name: "dv", crime: "BCagck", photo: "5.png", twitter: "https://x.com/vibed333" },
+      { id: 6, name: "Kreo", crime: "BCnqsP", photo: "6.png", twitter: "https://x.com/kreo444" },
+      { id: 7, name: "Casino", crime: "8rvAsD", photo: "7.png", twitter: "https://x.com/casino616" },
+      { id: 8, name: "Cented", crime: "WANTED", photo: "8.png", twitter: "https://x.com/Cented7" },
+      { id: 9, name: "Loopierr", crime: "9yYya3", photo: "9.png", twitter: "https://x.com/Loopierr" },
+      { id: 10, name: "Publix", crime: "86AEJE", photo: "10.png", twitter: "https://x.com/Publix" },
+      { id: 11, name: "Jijo", crime: "4BdKax", photo: "11.png", twitter: "https://x.com/Jijo" },
+      { id: 12, name: "Jidn", crime: "3h65Mm", photo: "12.png", twitter: "https://x.com/Jidn" },
+      { id: 13, name: "Classic", crime: "DsqRyT", photo: "13.png", twitter: "https://x.com/Classic" },
+      { id: 14, name: "West", crime: "JDd3hy", photo: "14.png", twitter: "https://x.com/West" },
+      { id: 15, name: "Pain", crime: "HAN61K", photo: "15.png", twitter: "https://x.com/Pain" },
+      { id: 16, name: "Tahi", crime: "5x8tfr", photo: "16.png", twitter: "https://x.com/Tahi" },
+      { id: 17, name: "Leens", crime: "7iabBM", photo: "17.png", twitter: "https://x.com/Leens" },
+      { id: 18, name: "Absol", crime: "BXNiM7", photo: "18.png", twitter: "https://x.com/Absol" },
+      { id: 19, name: "Danny", crime: "EaVboa", photo: "19.png", twitter: "https://x.com/Danny" },
+      { id: 20, name: "Henn100x", crime: "FRbUNv", photo: "20.png", twitter: "https://x.com/Henn100x" },
+      { id: 21, name: "ShockedJS", crime: "6m5sW6", photo: "21.png", twitter: "https://x.com/ShockedJS" },
+      { id: 22, name: "Cented", crime: "6m5sW6", photo: "22.png", twitter: "https://x.com/Cented7" },
+      { id: 23, name: "Chefin", crime: "6Qs6jo", photo: "23.png", twitter: "https://x.com/Chefin" },
+      { id: 24, name: "The Doc", crime: "DYAn4X", photo: "24.png", twitter: "https://x.com/The_Doc" },
+      { id: 25, name: "Cented", crime: "WANTED", photo: "25.png", twitter: "https://x.com/Cented7" },
+      { id: 26, name: "Assasin.eth", crime: "6LChaY", photo: "26.png", twitter: "https://x.com/Assasin.eth" },
+      { id: 27, name: "Cented", crime: "WANTED", photo: "27.png", twitter: "https://x.com/Cented7" },
+      { id: 28, name: "Mr. Frog", crime: "4Ddrfi", photo: "28.png", twitter: "https://x.com/Mr. Frog" },
+      { id: 29, name: "Trey", crime: "831yhv", photo: "29.png", twitter: "https://x.com/Trey" },
+      { id: 30, name: "Lynk", crime: "DrHszs", photo: "30.png", twitter: "https://x.com/Lynk" },
+      { id: 31, name: "Betman", crime: "BoYHJo", photo: "31.png", twitter: "https://x.com/Betman" },
+      { id: 32, name: "Jordan", crime: "EAnB51", photo: "32.png", twitter: "https://x.com/Jordan" },
+      { id: 33, name: "Value & Time", crime: "3nvC8c", photo: "33.png", twitter: "https://x.com/Value & Time" },
+      { id: 34, name: "Joji", crime: "Otta", photo: "34.png", twitter: "https://x.com/Joji" },
+      { id: 35, name: "Otta", crime: "As7HjL", photo: "35.png", twitter: "https://x.com/Otta" },
+      { id: 36, name: "Cented", crime: "WANTED", photo: "36.png", twitter: "https://x.com/Cented7" },
+      { id: 37, name: "Kev", crime: "BTf4A2", photo: "37.png", twitter: "https://x.com/Kev" },
+      { id: 38, name: "Sully", crime: "Ebk5AT", photo: "38.png", twitter: "https://x.com/Sully" },
+      { id: 39, name: "Insyder", crime: "G3g1CK", photo: "39.png", twitter: "https://x.com/Insyder" },
+      { id: 40, name: "Lynk", crime: "DrHszs", photo: "40.png", twitter: "https://x.com/Lynk" },
+      { id: 41, name: "Betman", crime: "BoYHJo", photo: "41.png", twitter: "https://x.com/Betman" },
+      { id: 42, name: "Jordan", crime: "EAnB51", photo: "42.png", twitter: "https://x.com/Jordan" },
+      { id: 43, name: "Value & Time", crime: "3nvC8c", photo: "1.png", twitter: "https://x.com/Value & Time" },
+      { id: 44, name: "Joji", crime: "Otta", photo: "44.png", twitter: "https://x.com/Joji" },
+      { id: 45, name: "Otta", crime: "As7HjL", photo: "45.png", twitter: "https://x.com/Otta" },
+      { id: 46, name: "Cented", crime: "WANTED", photo: "46.png", twitter: "https://x.com/Cented7" },
+      { id: 47, name: "Kev", crime: "BTf4A2", photo: "47.png", twitter: "https://x.com/Kev" },
+      { id: 48, name: "Sully", crime: "Ebk5AT", photo: "48.png", twitter: "https://x.com/Sully" },
+      { id: 49, name: "Insyder", crime: "G3g1CK", photo: "49.png", twitter: "https://x.com/Insyder" },
+      { id: 50, name: "0xWinged", crime: "G3g1CK", photo: "50.png", twitter: "https://x.com/0xWinged" }
+    ];
+
+    // Distribute fugitives into tiers (random distribution for demo)
+    const tiers = {
+      'goated': fugitives.slice(0, 5),
+      'good-traders': fugitives.slice(5, 15),
+      'mid': fugitives.slice(15, 25),
+      'farmers-bad': fugitives.slice(25, 30),
+      'liquidity-extractors': fugitives.slice(30, 40),
+      'who-tf': fugitives.slice(40)
+    };
+
+    Object.keys(tiers).forEach(tierId => {
+      const grid = document.getElementById(tierId);
+      const people = tiers[tierId];
+      
+      people.forEach(person => {
+        const card = document.createElement('div');
+        card.className = 'person-card';
+        card.onclick = () => window.open(person.twitter, '_blank');
+        
+        card.innerHTML = `
+          <img src="${person.photo}" alt="${person.name}" class="person-image" onerror="this.src='https://via.placeholder.com/100?text=${person.name.replace(' ', '+')}'">
+          <div class="person-info">
+            <div class="person-name">${person.name}</div>
+            <div class="person-crime">${person.crime}</div>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+    });
+  </script>
+
+</body></html>
